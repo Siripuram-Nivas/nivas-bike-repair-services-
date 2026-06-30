@@ -84,14 +84,16 @@ export default function BikeServices() {
     if (contactMode === 'popup') {
       setSelectedService(serviceName);
     } else if (contactMode === 'whatsapp') {
-      window.open(buildWhatsAppURL(serviceName), '_blank', 'noopener,noreferrer');
+      window.open(buildWhatsAppURL(serviceName), '_blank');
     } else if (contactMode === 'call') {
       window.open(`tel:${CALL_NUMBER}`);
     }
   }
 
   function onWhatsApp() {
-    window.open(buildWhatsAppURL(selectedService), '_blank', 'noopener,noreferrer');
+    const message = `Hello, I'm interested in ${selectedService}. Please provide more details.`;
+    const whatsappUrl = `https://wa.me/919110372978?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
     setSelectedService(null);
   }
 
