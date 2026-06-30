@@ -1,7 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { useRef } from 'react';
 import { Settings, Zap, Droplets, AlertCircle, Wrench, Link2, X, MessageCircle, Phone } from 'lucide-react';
 import { useLanguage } from '../context/useLanguage';
 
@@ -17,12 +16,12 @@ const CALL_NUMBER     = '+919110372978';
 // ────────────────────────────────────────────────────────────────────────────────
 
 const services = [
-  { titleKey: 'svc1_title', descKey: 'svc1_desc', icon: Settings, color: '#FF5733' },
-  { titleKey: 'svc2_title', descKey: 'svc2_desc', icon: Zap,      color: '#2563EB' },
-  { titleKey: 'svc3_title', descKey: 'svc3_desc', icon: Droplets, color: '#059669' },
+  { titleKey: 'svc1_title', descKey: 'svc1_desc', icon: Settings,    color: '#FF5733' },
+  { titleKey: 'svc2_title', descKey: 'svc2_desc', icon: Zap,         color: '#2563EB' },
+  { titleKey: 'svc3_title', descKey: 'svc3_desc', icon: Droplets,    color: '#059669' },
   { titleKey: 'svc4_title', descKey: 'svc4_desc', icon: AlertCircle, color: '#d97706' },
-  { titleKey: 'svc5_title', descKey: 'svc5_desc', icon: Wrench,   color: '#7c3aed' },
-  { titleKey: 'svc6_title', descKey: 'svc6_desc', icon: Link2,    color: '#0891b2' },
+  { titleKey: 'svc5_title', descKey: 'svc5_desc', icon: Wrench,      color: '#7c3aed' },
+  { titleKey: 'svc6_title', descKey: 'svc6_desc', icon: Link2,       color: '#0891b2' },
 ];
 
 const cardVariants = {
@@ -36,31 +35,58 @@ const cardVariants = {
 
 function buildWhatsAppURL(serviceName) {
   const msg = encodeURIComponent(
-    `Hello, I am interested in ${serviceName}. Please provide more details.`
+    `Hello, I'm interested in ${serviceName}. Please provide more details.`
   );
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
 }
 
-function handleCardClick(serviceName) {
-  if (contactMode === 'whatsapp') {
-    window.open(buildWhatsAppURL(serviceName), '_blank', 'noopener,noreferrer');
-  } else if (contactMode === 'call') {
-    window.location.href = `tel:${CALL_NUMBER}`;
-  }
-  // 'popup' is handled by the modal — returns the service name to parent
-}
-
 export default function BikeServices() {
   const { t } = useLanguage();
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const gridRef = useRef(null);
+  const inView = useInView(gridRef, { once: true, margin: '-80px' });
   const [selectedService, setSelectedService] = useState(null); // null = modal closed
+  const modalRef = useRef(null);
+  const firstBtnRef = useRef(null);
+
+  /* ── Close on Escape key ── */
+  useEffect(() => {
+    if (!selectedService) return;
+    function onKey(e) {
+      if (e.key === 'Escape') setSelectedService(null);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedService]);
+
+  /* ── Focus first button when modal opens ── */
+  useEffect(() => {
+    if (selectedService) {
+      setTimeout(() => firstBtnRef.current?.focus(), 50);
+    }
+  }, [selectedService]);
+
+  /* ── Focus trap inside modal ── */
+  function handleModalKeyDown(e) {
+    if (e.key !== 'Tab' || !modalRef.current) return;
+    const focusable = modalRef.current.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last  = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+    }
+  }
 
   function onCardClick(serviceName) {
     if (contactMode === 'popup') {
       setSelectedService(serviceName);
-    } else {
-      handleCardClick(serviceName);
+    } else if (contactMode === 'whatsapp') {
+      window.open(buildWhatsAppURL(serviceName), '_blank', 'noopener,noreferrer');
+    } else if (contactMode === 'call') {
+      window.open(`tel:${CALL_NUMBER}`);
     }
   }
 
@@ -70,7 +96,7 @@ export default function BikeServices() {
   }
 
   function onCall() {
-    window.location.href = `tel:${CALL_NUMBER}`;
+    window.open(`tel:${CALL_NUMBER}`);
     setSelectedService(null);
   }
 
@@ -93,7 +119,7 @@ export default function BikeServices() {
         </motion.div>
 
         {/* Grid */}
-        <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((svc, i) => {
             const Icon = svc.icon;
             const title = t(svc.titleKey);
@@ -106,6 +132,10 @@ export default function BikeServices() {
                 animate={inView ? 'visible' : 'hidden'}
                 whileHover={{ y: -6, boxShadow: `0 12px 32px ${svc.color}22` }}
                 onClick={() => onCardClick(title)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Book ${title}`}
+                onKeyDown={(e) => e.key === 'Enter' && onCardClick(title)}
                 className="group relative bg-white rounded-2xl p-7 border border-gray-100 card-shadow cursor-pointer transition-all duration-300"
               >
                 {/* Icon */}
@@ -138,53 +168,69 @@ export default function BikeServices() {
         </div>
       </div>
 
-      {/* ── Contact Popup Modal ─────────────────────────────────────────────── */}
+      {/* ── Contact Popup Modal ─────────────────────────────────────────────────── */}
       <AnimatePresence>
         {selectedService && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop — click outside to close */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center"
+              transition={{ duration: 0.22 }}
+              className="fixed inset-0 z-50 flex items-center justify-center px-4"
+              style={{ backdropFilter: 'blur(6px)', background: 'rgba(0,0,0,0.45)' }}
               onClick={() => setSelectedService(null)}
+              aria-hidden="true"
+            />
+
+            {/* Modal */}
+            <motion.div
+              key="modal"
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-title"
+              onKeyDown={handleModalKeyDown}
+              initial={{ opacity: 0, scale: 0.92, y: 24 }}
+              animate={{ opacity: 1, scale: 1,    y: 0  }}
+              exit={{   opacity: 0, scale: 0.92, y: 24  }}
+              transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-0 z-50 flex items-center justify-center px-4 pointer-events-none"
             >
-              {/* Modal sheet */}
-              <motion.div
-                key="modal"
-                initial={{ opacity: 0, y: 60, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0,  scale: 1 }}
-                exit={{ opacity: 0, y: 60, scale: 0.97 }}
-                transition={{ duration: 0.28, ease: 'easeOut' }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl shadow-2xl p-7 mx-0 sm:mx-4 relative"
-              >
-                {/* Close button */}
+              <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 pointer-events-auto relative">
+
+                {/* Close ✕ button */}
                 <button
                   onClick={() => setSelectedService(null)}
-                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors"
-                  aria-label="Close"
+                  className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  aria-label="Close popup"
                 >
                   <X className="w-4 h-4" />
                 </button>
 
-                {/* Drag handle (mobile) */}
-                <div className="w-10 h-1 rounded-full bg-gray-200 mx-auto mb-6 sm:hidden" />
+                {/* Title */}
+                <h3 id="modal-title" className="text-xl font-extrabold text-brand-charcoal mb-2">
+                  Need This Service?
+                </h3>
 
-                <h3 className="text-xl font-extrabold text-brand-charcoal mb-1">Need This Service?</h3>
-                <p className="text-gray-400 text-sm mb-1">
-                  <span className="font-semibold text-gray-600">{selectedService}</span>
+                {/* Subtitle */}
+                <p className="text-sm text-gray-500 mb-1">
+                  You selected:{' '}
+                  <span className="font-semibold text-gray-700">{selectedService}</span>
                 </p>
-                <p className="text-gray-400 text-sm mb-6">Select how you'd like to contact us.</p>
+                <p className="text-sm text-gray-400 mb-7">
+                  Choose how you'd like to contact us.
+                </p>
 
+                {/* Action buttons */}
                 <div className="flex flex-col gap-3">
                   {/* WhatsApp */}
                   <button
+                    ref={firstBtnRef}
                     onClick={onWhatsApp}
-                    className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                    className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-green-400"
                     style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}
                   >
                     <MessageCircle className="w-5 h-5 shrink-0" />
@@ -194,7 +240,7 @@ export default function BikeServices() {
                   {/* Call */}
                   <button
                     onClick={onCall}
-                    className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                    className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-orange-400"
                     style={{ background: 'linear-gradient(135deg, #FF5733, #c0392b)' }}
                   >
                     <Phone className="w-5 h-5 shrink-0" />
@@ -204,12 +250,12 @@ export default function BikeServices() {
                   {/* Cancel */}
                   <button
                     onClick={() => setSelectedService(null)}
-                    className="w-full px-5 py-3 rounded-xl font-semibold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors active:scale-[0.98]"
+                    className="w-full px-5 py-3 rounded-xl font-semibold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-gray-300"
                   >
                     ✖ Cancel
                   </button>
                 </div>
-              </motion.div>
+              </div>
             </motion.div>
           </>
         )}
