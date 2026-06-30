@@ -1,6 +1,6 @@
 
 import { Wrench, MessageCircle, MapPin, Phone } from 'lucide-react';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../context/useLanguage';
 
 const WHATSAPP = 'https://wa.me/919110372978';
 

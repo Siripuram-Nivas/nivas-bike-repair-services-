@@ -1,7 +1,7 @@
 
 import { motion } from 'framer-motion';
 import { MessageCircle, Phone, MapPin, Clock } from 'lucide-react';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../context/useLanguage';
 
 const WHATSAPP = 'https://wa.me/919110372978?text=Hi%2C%20I%20would%20like%20to%20book%20a%20bike%20service.';
 const PHONE = 'tel:+919110372978';

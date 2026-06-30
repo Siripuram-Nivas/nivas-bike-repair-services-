@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, DollarSign, Clock, Star, Award, Heart } from 'lucide-react';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../context/useLanguage';
 
 const features = [
   { titleKey: 'why1_title', descKey: 'why1_desc', icon: ShieldCheck },

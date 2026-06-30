@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import { useState } from 'react';
+import { LanguageContext } from './useLanguage';
 
 const content = {
   en: {
@@ -39,8 +40,8 @@ const content = {
     svc4_desc: 'Safety-first brake and clutch inspection, adjustment and replacement.',
     svc5_title: 'General Maintenance',
     svc5_desc: 'Routine checks, adjustments and preventive maintenance to avoid costly repairs.',
-    svc6_title: 'Puncture & Tyre Replacement',
-    svc6_desc: 'Quick puncture repair and tyre replacement with quality rubber.',
+    svc6_title: 'Chain Cleaning & Lubrication',
+    svc6_desc: 'Professional chain cleaning, lubrication, and adjustment to improve performance, reduce wear, and ensure a smoother riding experience.',
 
     // Why Choose Us
     why_title: 'Why Choose Us',
@@ -173,8 +174,8 @@ const content = {
     svc4_desc: 'భద్రతకు ప్రాధాన్యత ఇస్తూ బ్రేక్ మరియు క్లచ్ తనిఖీ, సర్దుబాటు మరియు రీప్లేస్‌మెంట్.',
     svc5_title: 'సాధారణ నిర్వహణ',
     svc5_desc: 'ఖర్చుతో కూడిన మరమ్మతులను నివారించడానికి రొటీన్ చెక్కులు మరియు నివారణ నిర్వహణ.',
-    svc6_title: 'పంక్చర్ & టైర్ రీప్లేస్‌మెంట్',
-    svc6_desc: 'నాణ్యమైన రబ్బరుతో త్వరిత పంక్చర్ మరమ్మతు మరియు టైర్ రీప్లేస్‌మెంట్.',
+    svc6_title: 'చైన్ క్లీనింగ్ & లూబ్రికేషన్',
+    svc6_desc: 'పనితీరును మెరుగుపరచడానికి, అరుగుదలను తగ్గించడానికి మరియు మృదువైన రైడింగ్ అనుభవాన్ని నిర్ధారించడానికి ప్రొఫెషనల్ చైన్ క్లీనింగ్, లూబ్రికేషన్ మరియు సర్దుబాటు.',
 
     // Why Choose Us
     why_title: 'మేమ్ ఎందుకు ఎంచుకోవాలి',
@@ -270,8 +271,6 @@ const content = {
   }
 };
 
-const LanguageContext = createContext();
-
 export const LanguageProvider = ({ children }) => {
   const [lang, setLang] = useState('en');
   const t = (key) => content[lang][key] || key;
@@ -282,5 +281,3 @@ export const LanguageProvider = ({ children }) => {
     </LanguageContext.Provider>
   );
 };
-
-export const useLanguage = () => useContext(LanguageContext);

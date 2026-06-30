@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Search, ScanLine, ClipboardList, Wrench, CheckCircle2, Bike } from 'lucide-react';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../context/useLanguage';
 
 const steps = [
   { titleKey: 'p1_title', descKey: 'p1_desc', icon: Search },

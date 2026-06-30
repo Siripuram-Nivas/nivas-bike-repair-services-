@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CalendarCheck, Gauge, Link2, FlaskConical } from 'lucide-react';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../context/useLanguage';
 
 const tips = [
   { titleKey: 'tip1_title', descKey: 'tip1_desc', icon: CalendarCheck, gradient: 'from-orange-500 to-orange-400' },
