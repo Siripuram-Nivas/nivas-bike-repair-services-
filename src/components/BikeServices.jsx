@@ -1,18 +1,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { Settings, Zap, Droplets, AlertCircle, Wrench, Link2, X, MessageCircle, Phone } from 'lucide-react';
+import { Settings, Zap, Droplets, AlertCircle, Wrench, Link2, X, Phone } from 'lucide-react';
 import { useLanguage } from '../context/useLanguage';
 
 // ─── CONFIGURATION ─────────────────────────────────────────────────────────────
-// Change this value to switch contact behaviour for all service cards at once.
-// "popup"    → shows a modal with WhatsApp + Call options (recommended)
-// "whatsapp" → opens WhatsApp directly with a pre-filled message
-// "call"     → opens the phone dialer directly
-const contactMode = 'popup';
-
-const WHATSAPP_NUMBER = '919110372978'; // country code + number, no +
-const CALL_NUMBER     = '+919110372978';
+const CALL_NUMBER = '+91 9110372978';
 // ────────────────────────────────────────────────────────────────────────────────
 
 const services = [
@@ -33,12 +26,6 @@ const cardVariants = {
   }),
 };
 
-function buildWhatsAppURL(serviceName) {
-  const msg = encodeURIComponent(
-    `Hello, I'm interested in ${serviceName}. Please provide more details.`
-  );
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
-}
 
 export default function BikeServices() {
   const { t } = useLanguage();
@@ -81,24 +68,12 @@ export default function BikeServices() {
   }
 
   function onCardClick(serviceName) {
-    if (contactMode === 'popup') {
-      setSelectedService(serviceName);
-    } else if (contactMode === 'whatsapp') {
-      window.open(buildWhatsAppURL(serviceName), '_blank');
-    } else if (contactMode === 'call') {
-      window.open(`tel:${CALL_NUMBER}`);
-    }
+    setSelectedService(serviceName);
   }
 
-  function onWhatsApp() {
-    const message = `Hello, I'm interested in ${selectedService}. Please provide more details.`;
-    const whatsappUrl = `https://wa.me/919110372978?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-    setSelectedService(null);
-  }
 
   function onCall() {
-    window.location.assign(`tel:${CALL_NUMBER}`);
+    window.location.href = `tel:${CALL_NUMBER}`;
     setSelectedService(null);
   }
 
@@ -220,24 +195,14 @@ export default function BikeServices() {
                 <span className="font-semibold text-gray-700">{selectedService}</span>
               </p>
               <p className="text-sm text-gray-400 mb-7">
-                Choose how you'd like to contact us.
+                Call us now to book this service or discuss your bike problem.
               </p>
 
               {/* Action buttons */}
               <div className="flex flex-col gap-3">
-                {/* WhatsApp */}
+                {/* Call Now */}
                 <button
                   ref={firstBtnRef}
-                  onClick={onWhatsApp}
-                  className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-green-400"
-                  style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}
-                >
-                  <MessageCircle className="w-5 h-5 shrink-0" />
-                  WhatsApp Mechanic
-                </button>
-
-                {/* Call */}
-                <button
                   onClick={onCall}
                   className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-orange-400"
                   style={{ background: 'linear-gradient(135deg, #FF5733, #c0392b)' }}
