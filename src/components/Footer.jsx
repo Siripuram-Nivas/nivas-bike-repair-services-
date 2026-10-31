@@ -1,109 +1,144 @@
-
-import { Wrench, MessageCircle, MapPin, Phone } from 'lucide-react';
+import {
+  ArrowUp,
+  Clock,
+  MapPin,
+  MessageCircle,
+  Phone,
+} from 'lucide-react';
+import { business, navLinks, services } from '../config/business';
+import { generalEnquiryUrl } from '../lib/whatsapp';
 import { useLanguage } from '../context/useLanguage';
-
-const WHATSAPP = 'https://wa.me/919110372978';
-
-const quickLinks = [
-  { label: 'Services', href: '#services' },
-  { label: 'Why Choose Us', href: '#why' },
-  { label: 'Service Process', href: '#process' },
-  { label: 'Bike Care Tips', href: '#tips' },
-  { label: 'Testimonials', href: '#testimonials' },
-  { label: 'FAQ', href: '#faq' },
-];
+import Logo from './ui/Logo';
 
 export default function Footer() {
   const { t } = useLanguage();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#1a2830] text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-
-          {/* Brand */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-brand-orange flex items-center justify-center">
-                <Wrench className="text-white w-5 h-5" />
-              </div>
-              <div className="leading-tight">
-                <span className="block font-bold text-white text-sm">Nivas Bike Repair</span>
-                <span className="block text-[10px] text-brand-orange font-medium tracking-wide">Sundaragiri</span>
-              </div>
-            </div>
-            <p className="text-white/50 text-sm leading-relaxed mb-5">{t('footer_tagline')}</p>
+    <footer className="border-t border-white/10 bg-ink text-white">
+      <div className="container-page py-14 md:py-16">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.8fr_0.9fr_1.1fr] lg:gap-8">
+          <div>
             <a
-              href={WHATSAPP}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#25D366] text-white text-sm font-semibold hover:bg-[#1fb858] transition-all"
+              href="#home"
+              className="inline-flex rounded-sm"
             >
-              <MessageCircle className="w-4 h-4" />
-              WhatsApp Us
+              <Logo onDark />
+            </a>
+            <p className="mt-5 max-w-xs text-[0.875rem] leading-relaxed text-white/55">
+              {t('footer_desc')}
+            </p>
+            <a
+              href={generalEnquiryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-whatsapp mt-6 !min-h-10 !px-4 !text-[0.8125rem]"
+            >
+              <MessageCircle aria-hidden="true" className="h-4 w-4" />
+              {t('footer_whatsapp')}
+              <span className="sr-only"> ({t('new_tab')})</span>
             </a>
           </div>
 
-          {/* Quick Links */}
+          <nav aria-label={t('footer_quick')}>
+            <h2 className="text-[0.625rem] font-bold uppercase tracking-[0.18em] text-white/50">
+              {t('footer_quick')}
+            </h2>
+            <ul className="mt-4 space-y-2.5">
+              {[...navLinks, { id: 'pricing', key: 'pricing_eyebrow' }, { id: 'tips', key: 'tips_eyebrow' }].map(
+                (link) => (
+                  <li key={link.id}>
+                    <a
+                      href={`#${link.id}`}
+                      className="text-[0.8125rem] text-white/55 transition-colors hover:text-accent-light"
+                    >
+                      {t(link.key)}
+                    </a>
+                  </li>
+                ),
+              )}
+            </ul>
+          </nav>
+
           <div>
-            <h4 className="font-bold text-white mb-5 text-sm uppercase tracking-wider">Quick Links</h4>
-            <ul className="flex flex-col gap-2.5">
-              {quickLinks.map(link => (
-                <li key={link.href}>
-                  <a href={link.href} className="text-white/50 text-sm hover:text-brand-orange transition-colors">
-                    {link.label}
+            <h2 className="text-[0.625rem] font-bold uppercase tracking-[0.18em] text-white/50">
+              {t('footer_services')}
+            </h2>
+            <ul className="mt-4 space-y-2.5">
+              {services.map((service) => (
+                <li key={service.id}>
+                  <a
+                    href="#services"
+                    className="text-[0.8125rem] text-white/55 transition-colors hover:text-accent-light"
+                  >
+                    {t(service.nameKey)}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Services */}
           <div>
-            <h4 className="font-bold text-white mb-5 text-sm uppercase tracking-wider">Services</h4>
-            <ul className="flex flex-col gap-2.5">
-              {['Complete Servicing', 'Engine Overhaul', 'Oil Change', 'Brake Repair', 'Maintenance', 'Tyre Replacement'].map(s => (
-                <li key={s}>
-                  <span className="text-white/50 text-sm">{s}</span>
-                </li>
-              ))}
+            <h2 className="text-[0.625rem] font-bold uppercase tracking-[0.18em] text-white/50">
+              {t('footer_contact')}
+            </h2>
+            <ul className="mt-4 space-y-3.5">
+              <li className="flex items-start gap-2.5">
+                <MapPin
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-accent"
+                />
+                <a
+                  href={business.maps.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[0.8125rem] leading-relaxed text-white/55 transition-colors hover:text-white"
+                >
+                  {t('contact_address')}
+                </a>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Phone
+                  aria-hidden="true"
+                  className="h-4 w-4 shrink-0 text-accent"
+                />
+                <a
+                  href={business.phone.telHref}
+                  className="text-[0.8125rem] text-white/55 transition-colors hover:text-white"
+                >
+                  {business.phone.display}
+                </a>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Clock
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-accent"
+                />
+                <span className="text-[0.8125rem] leading-relaxed text-white/55">
+                  {t('contact_hours')}
+                </span>
+              </li>
             </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="font-bold text-white mb-5 text-sm uppercase tracking-wider">Contact</h4>
-            <div className="flex flex-col gap-4">
-              <a
-                href="https://maps.google.com/?q=55VX%2BVRM+Sundaragiri+Telangana+505467"
-                target="_blank"
-                rel="noreferrer"
-                id="footer-location-link"
-                className="flex items-start gap-3 group"
-              >
-                <MapPin className="w-4 h-4 text-brand-orange mt-0.5 shrink-0" />
-                <p className="text-white/50 text-sm group-hover:text-brand-orange transition-colors">{t('contact_address')}</p>
-              </a>
-              <div className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-brand-orange shrink-0" />
-                <a href="tel:+919110372978" className="text-white/50 text-sm hover:text-white transition-colors">
-                  +91 91103 72978
-                </a>
-              </div>
-              <div className="flex items-center gap-3">
-                <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
-                <a href={WHATSAPP} target="_blank" rel="noreferrer" className="text-white/50 text-sm hover:text-white transition-colors">
-                  WhatsApp
-                </a>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-white/30 text-xs">{t('footer_rights')}</p>
-          <p className="text-white/30 text-xs">Made with ❤️ for Sundaragiri</p>
+        <div className="mt-12 border-t border-white/10 pt-6">
+          <p className="mt-5 text-[0.6875rem] leading-relaxed text-white/50">
+            {t('footer_seo')}
+          </p>
+
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[0.6875rem] text-white/50">
+              © {year} {business.name}. {t('footer_rights')}
+            </p>
+            <a
+              href="#home"
+              className="inline-flex items-center gap-1.5 text-[0.6875rem] font-semibold text-white/60 transition-colors hover:text-accent-light"
+            >
+              {t('footer_back_top')}
+              <ArrowUp aria-hidden="true" className="h-3.5 w-3.5" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,150 +1,333 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Wrench, Menu, X, MessageCircle } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowUpRight, Menu, MessageCircle, Phone, X } from 'lucide-react';
+import { business, navLinks } from '../config/business';
+import { generalEnquiryUrl } from '../lib/whatsapp';
 import { useLanguage } from '../context/useLanguage';
-
-const navLinks = [
-  { key: 'nav_home', href: '#home' },
-  { key: 'nav_services', href: '#services' },
-  { key: 'nav_why', href: '#why' },
-  { key: 'nav_process', href: '#process' },
-  { key: 'nav_tips', href: '#tips' },
-  { key: 'nav_testimonials', href: '#testimonials' },
-  { key: 'nav_faq', href: '#faq' },
-  { key: 'nav_contact', href: '#contact' },
-];
-
-const WHATSAPP = 'https://wa.me/919110372978';
+import Logo from './ui/Logo';
 
 export default function Navbar() {
-  const { t, lang, toggleLang } = useLanguage();
+  const { t, lang, setLang } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState('home');
+  const panelRef = useRef(null);
+
+  const solid = scrolled || open;
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handler);
-    return () => window.removeEventListener('scroll', handler);
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    const sections = navLinks
+      .map((link) => document.getElementById(link.id))
+      .filter(Boolean);
+
+    if (!('IntersectionObserver' in window)) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { rootMargin: '-42% 0px -54% 0px', threshold: 0 },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const panel = panelRef.current;
+    const closeButton = panel?.querySelector('[data-close-menu]');
+    const previousFocus = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+    closeButton?.focus();
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        return;
+      }
+
+      if (event.key !== 'Tab' || !panel) return;
+
+      const focusable = Array.from(
+        panel.querySelectorAll(
+          'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => element.offsetParent !== null);
+
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+      if (previousFocus instanceof HTMLElement) previousFocus.focus();
+    };
+  }, [open]);
+
+  const handleNavigate = () => setOpen(false);
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-lg'
-            : 'bg-transparent'
+      <header
+        className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ${
+          solid
+            ? 'border-line bg-cream/95 shadow-[0_10px_30px_-24px_rgba(21,27,34,0.5)] backdrop-blur-md'
+            : 'border-transparent bg-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            {/* Logo */}
-            <a href="#home" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-[#FF5733] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
-                <Wrench className="text-white w-5 h-5" />
-              </div>
-              <div className="leading-tight">
-                <span className="block font-bold text-[#36454F] text-sm">Nivas Bike Repair</span>
-                <span className="block text-[10px] text-[#FF5733] font-medium tracking-wide">Sundaragiri</span>
-              </div>
+        <div className="container-page">
+          <div className="flex h-[4.5rem] items-center justify-between gap-3">
+            <a
+              href="#home"
+              className="shrink-0 rounded-sm focus-visible:outline-offset-4"
+            >
+              <Logo onDark={!solid} />
             </a>
 
-            {/* Desktop nav */}
-            <div className="hidden lg:flex items-center gap-1">
-              {navLinks.map(link => (
-                <a
-                  key={link.key}
-                  href={link.href}
-                  className="px-3 py-1.5 rounded-lg text-sm font-medium text-[#36454F] hover:text-[#FF5733] hover:bg-orange-50 transition-all"
-                >
-                  {t(link.key)}
-                </a>
-              ))}
-            </div>
+            <nav
+              aria-label={t('nav_aria')}
+              className="hidden items-center gap-0.5 xl:flex"
+            >
+              {navLinks.map((link) => {
+                const isActive = active === link.id;
+                return (
+                  <a
+                    key={link.id}
+                    href={`#${link.id}`}
+                    aria-current={isActive ? 'location' : undefined}
+                    className={`relative whitespace-nowrap px-3 py-2.5 text-[0.8125rem] font-semibold transition-colors ${
+                      solid
+                        ? isActive
+                          ? 'text-ink'
+                          : 'text-graphite/70 hover:text-ink'
+                        : isActive
+                          ? 'text-white'
+                          : 'text-white/65 hover:text-white'
+                    }`}
+                  >
+                    {t(link.key)}
+                    <span
+                      aria-hidden="true"
+                      className={`absolute inset-x-3 -bottom-px h-[2px] origin-left bg-accent transition-transform duration-300 ${
+                        isActive ? 'scale-x-100' : 'scale-x-0'
+                      }`}
+                    />
+                  </a>
+                );
+              })}
+            </nav>
 
-            {/* Right actions */}
             <div className="flex items-center gap-2">
-              {/* Language toggle */}
               <button
-                onClick={toggleLang}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#36454F]/20 text-xs font-semibold text-[#36454F] hover:border-[#FF5733] hover:text-[#FF5733] transition-all"
+                type="button"
+                onClick={() => setLang(lang === 'en' ? 'te' : 'en')}
+                className={`hidden h-9 items-center whitespace-nowrap rounded-[6px] border px-3 text-xs font-semibold transition-colors md:inline-flex ${
+                  solid
+                    ? 'border-line text-graphite hover:border-ink hover:text-ink'
+                    : 'border-white/25 text-white/80 hover:border-white/60 hover:text-white'
+                }`}
               >
-                {lang === 'en' ? '🇮🇳 తెలుగు' : '🌐 English'}
+                <span lang={lang === 'en' ? 'te' : 'en'}>{t('lang_toggle')}</span>
+                <span className="sr-only"> {t('lang_toggle_aria')}</span>
               </button>
-              {/* Book Now CTA */}
+
               <a
-                href={WHATSAPP}
-                target="_blank"
-                rel="noreferrer"
-                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#FF5733] text-white text-sm font-semibold hover:bg-[#e04e2e] transition-all shadow-md hover:shadow-orange-200"
+                href="#book"
+                className="btn btn-primary hidden whitespace-nowrap !min-h-10 !px-4 !py-2 !text-[0.8125rem] md:inline-flex"
               >
-                <MessageCircle className="w-4 h-4" />
                 {t('nav_book')}
+                <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
               </a>
-              {/* Mobile menu toggle */}
+
               <button
-                id="mobile-menu-btn"
-                onClick={() => setOpen(!open)}
-                className="lg:hidden p-2 rounded-xl text-[#36454F] hover:bg-orange-50 transition-colors"
+                type="button"
+                onClick={() => setOpen((value) => !value)}
+                aria-expanded={open}
+                aria-controls="mobile-navigation"
+                aria-label={open ? t('nav_close') : t('nav_menu')}
+                className={`inline-flex h-10 w-10 items-center justify-center rounded-[6px] border transition-colors xl:hidden ${
+                  solid
+                    ? 'border-line text-ink hover:bg-ink hover:text-white'
+                    : 'border-white/25 text-white hover:bg-white/10'
+                }`}
               >
-                {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {open ? (
+                  <X aria-hidden="true" className="h-5 w-5" />
+                ) : (
+                  <Menu aria-hidden="true" className="h-5 w-5" />
+                )}
               </button>
             </div>
           </div>
         </div>
-      </motion.nav>
+      </header>
 
-      {/* Mobile drawer */}
       <AnimatePresence>
-        {open && (
+        {open ? (
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-0 z-40 lg:hidden"
+            key="mobile-menu"
+            initial={false}
+            className="fixed inset-0 z-[60] xl:hidden"
           >
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
-            <div className="absolute top-0 right-0 bottom-0 w-72 bg-white shadow-2xl flex flex-col p-6 gap-4">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-bold text-[#36454F] text-lg">Menu</span>
-                <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100">
-                  <X className="w-5 h-5 text-[#36454F]" />
-                </button>
-              </div>
-              {navLinks.map(link => (
-                <a
-                  key={link.key}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="py-2.5 px-3 rounded-xl text-base font-medium text-[#36454F] hover:text-[#FF5733] hover:bg-orange-50 transition-all"
-                >
-                  {t(link.key)}
-                </a>
-              ))}
-              <div className="mt-4 border-t pt-4 flex flex-col gap-3">
+            <motion.button
+              type="button"
+              aria-label={t('nav_close')}
+              tabIndex={-1}
+              onClick={() => setOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 h-full w-full cursor-default bg-ink/70 backdrop-blur-sm"
+            />
+
+            <motion.div
+              id="mobile-navigation"
+              ref={panelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label={t('mobile_nav_aria')}
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-y-0 right-0 flex w-[min(22rem,100%)] flex-col bg-cream shadow-2xl"
+            >
+              <div className="flex h-[4.5rem] items-center justify-between border-b border-line px-5">
+                <Logo />
                 <button
-                  onClick={() => { toggleLang(); setOpen(false); }}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-[#36454F]/20 text-sm font-semibold text-[#36454F] hover:border-[#FF5733] hover:text-[#FF5733] transition-all"
+                  type="button"
+                  data-close-menu
+                  onClick={() => setOpen(false)}
+                  aria-label={t('nav_close')}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-[6px] border border-line text-ink transition-colors hover:bg-ink hover:text-white"
                 >
-                  {lang === 'en' ? '🇮🇳 తెలుగు' : '🌐 English'}
+                  <X aria-hidden="true" className="h-5 w-5" />
                 </button>
+              </div>
+
+              <nav
+                aria-label={t('mobile_nav_aria')}
+                className="flex-1 overflow-y-auto px-5 py-4"
+              >
+                <ul className="divide-y divide-line/80">
+                  {navLinks.map((link, index) => (
+                    <li key={link.id}>
+                      <a
+                        href={`#${link.id}`}
+                        onClick={handleNavigate}
+                        aria-current={active === link.id ? 'location' : undefined}
+                        className={`flex items-center justify-between gap-4 py-3.5 text-[1.0625rem] font-semibold transition-colors ${
+                          active === link.id
+                            ? 'text-accent-dark'
+                            : 'text-ink hover:text-accent-dark'
+                        }`}
+                      >
+                        <span>{t(link.key)}</span>
+                        <span className="font-mono text-[0.6875rem] font-medium tracking-wider text-muted">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-5">
+                  <p className="mb-2 text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-muted">
+                    {t('lang_label')}
+                  </p>
+                  <div
+                    role="group"
+                    aria-label={t('lang_toggle_aria')}
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setLang('en')}
+                      aria-pressed={lang === 'en'}
+                      className={`min-h-10 rounded-[6px] border px-3 text-sm font-semibold transition-colors ${
+                        lang === 'en'
+                          ? 'border-ink bg-ink text-white'
+                          : 'border-line bg-white text-graphite hover:border-ink'
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLang('te')}
+                      aria-pressed={lang === 'te'}
+                      lang="te"
+                      className={`min-h-10 rounded-[6px] border px-3 text-sm font-semibold transition-colors ${
+                        lang === 'te'
+                          ? 'border-ink bg-ink text-white'
+                          : 'border-line bg-white text-graphite hover:border-ink'
+                      }`}
+                    >
+                      తెలుగు
+                    </button>
+                  </div>
+                </div>
+              </nav>
+
+              <div className="space-y-2 border-t border-line px-5 pb-6 pt-4 safe-bottom">
                 <a
-                  href={WHATSAPP}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-[#FF5733] text-white text-sm font-bold hover:bg-[#e04e2e] transition-all"
+                  href="#book"
+                  onClick={handleNavigate}
+                  className="btn btn-primary w-full"
                 >
-                  <MessageCircle className="w-4 h-4" />
                   {t('nav_book')}
+                  <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                </a>
+                <a
+                  href={business.phone.telHref}
+                  onClick={handleNavigate}
+                  className="btn btn-outline-dark w-full !min-h-11 !text-sm"
+                >
+                  <Phone aria-hidden="true" className="h-4 w-4" />
+                  {t('contact_call')}
+                </a>
+                <a
+                  href={generalEnquiryUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleNavigate}
+                  className="btn btn-whatsapp w-full !min-h-11 !text-sm"
+                >
+                  <MessageCircle aria-hidden="true" className="h-4 w-4" />
+                  {t('action_whatsapp')}
+                  <span className="sr-only"> ({t('new_tab')})</span>
                 </a>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
     </>
   );

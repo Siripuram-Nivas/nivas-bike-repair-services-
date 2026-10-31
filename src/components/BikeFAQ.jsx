@@ -1,91 +1,137 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { useId, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { MessageCircle, Plus } from 'lucide-react';
 import { useLanguage } from '../context/useLanguage';
+import { generalEnquiryUrl } from '../lib/whatsapp';
+import Reveal from './ui/Reveal';
+import SectionHeading from './ui/SectionHeading';
 
-const faqKeys = [
+const faqItems = [
   { qKey: 'faq1_q', aKey: 'faq1_a' },
   { qKey: 'faq2_q', aKey: 'faq2_a' },
   { qKey: 'faq3_q', aKey: 'faq3_a' },
   { qKey: 'faq4_q', aKey: 'faq4_a' },
+  { qKey: 'faq5_q', aKey: 'faq5_a' },
+  { qKey: 'faq6_q', aKey: 'faq6_a' },
+  { qKey: 'faq7_q', aKey: 'faq7_a' },
 ];
 
-function FAQItem({ qKey, aKey, index }) {
+function FAQItem({ item, index, isOpen, onToggle }) {
   const { t } = useLanguage();
-  const [open, setOpen] = useState(false);
+  const baseId = useId();
+  const buttonId = `faq-button-${baseId}`;
+  const panelId = `faq-panel-${baseId}`;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ delay: index * 0.1, duration: 0.4 }}
-      className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
-        open ? 'border-[#FF5733]/40 shadow-md shadow-orange-100' : 'border-gray-200 hover:border-[#FF5733]/20'
-      }`}
-    >
-      <button
-        id={`faq-item-${index}`}
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left bg-white hover:bg-orange-50/30 transition-colors"
-      >
-        <span className="font-semibold text-[#36454F] text-sm sm:text-base">{t(qKey)}</span>
-        <motion.div
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-          className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-            open ? 'bg-[#FF5733] text-white' : 'bg-gray-100 text-gray-500'
-          }`}
+    <li className="border-b border-line">
+      <h3>
+        <button
+          id={buttonId}
+          type="button"
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          onClick={onToggle}
+          className="flex w-full items-start justify-between gap-4 py-5 text-left transition-colors hover:text-accent-dark"
         >
-          <ChevronDown className="w-5 h-5" />
-        </motion.div>
-      </button>
+          <span className="flex gap-3">
+            <span
+              aria-hidden="true"
+              className="mt-0.5 font-mono text-[0.6875rem] font-medium tracking-wider text-muted/70"
+            >
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="font-display text-[0.9375rem] font-bold leading-snug text-ink sm:text-[1rem]">
+              {t(item.qKey)}
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-colors ${
+              isOpen
+                ? 'border-accent bg-accent text-ink'
+                : 'border-line text-graphite'
+            }`}
+          >
+            <Plus
+              className={`h-3.5 w-3.5 transition-transform duration-300 ${
+                isOpen ? 'rotate-45' : ''
+              }`}
+            />
+          </span>
+        </button>
+      </h3>
 
-      <AnimatePresence>
-        {open && (
+      <AnimatePresence initial={false}>
+        {isOpen ? (
           <motion.div
+            id={panelId}
+            role="region"
+            aria-labelledby={buttonId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden bg-white"
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
           >
-            <p className="px-6 pb-5 text-gray-500 text-sm leading-relaxed border-t border-gray-100 pt-4">
-              {t(aKey)}
+            <p className="pb-5 pl-8 pr-10 text-[0.875rem] leading-relaxed text-muted">
+              {t(item.aKey)}
             </p>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
-    </motion.div>
+    </li>
   );
 }
 
 export default function BikeFAQ() {
   const { t } = useLanguage();
+  const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section id="faq" className="section-padding bg-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-[#FF5733] text-sm font-semibold mb-4">
-            FAQ
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#36454F] mb-4">{t('faq_title')}</h2>
-          <p className="text-gray-500 text-lg">{t('faq_subtitle')}</p>
-        </motion.div>
+    <section id="faq" className="section-y scroll-mt-24 bg-white">
+      <div className="container-page">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <div>
+            <SectionHeading
+              eyebrowKey="faq_eyebrow"
+              titleKey="faq_title"
+              subtitleKey="faq_subtitle"
+            />
 
-        {/* Accordion */}
-        <div className="flex flex-col gap-4">
-          {faqKeys.map((item, i) => (
-            <FAQItem key={i} qKey={item.qKey} aKey={item.aKey} index={i} />
-          ))}
+            <Reveal delay={0.08}>
+              <div className="mt-8 rounded-[10px] border border-line bg-cream p-5">
+                <p className="font-display text-[0.9375rem] font-bold text-ink">
+                  {t('faq_contact')}
+                </p>
+                <a
+                  href={generalEnquiryUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-dark mt-4 w-full !min-h-11 !text-sm"
+                >
+                  <MessageCircle aria-hidden="true" className="h-4 w-4" />
+                  {t('faq_contact_cta')}
+                  <span className="sr-only"> ({t('new_tab')})</span>
+                </a>
+              </div>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.06}>
+            <ul className="border-t border-line">
+              {faqItems.map((item, index) => (
+                <FAQItem
+                  key={item.qKey}
+                  item={item}
+                  index={index}
+                  isOpen={openIndex === index}
+                  onToggle={() =>
+                    setOpenIndex((current) => (current === index ? -1 : index))
+                  }
+                />
+              ))}
+            </ul>
+          </Reveal>
         </div>
       </div>
     </section>

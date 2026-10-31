@@ -1,148 +1,178 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { MessageCircle, ChevronDown, Shield, Clock, ThumbsUp } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowDown, ArrowUpRight, Bike, Check, MapPin, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/useLanguage';
+import HeroScrub from './ui/HeroScrub';
 
-const WHATSAPP = 'https://wa.me/919110372978?text=Hi%2C%20I%20would%20like%20to%20book%20a%20bike%20service.';
-
-const badges = [
-  { numKey: 'hero_badge1', subKey: 'hero_badge1_sub', icon: Shield },
-  { numKey: 'hero_badge2', subKey: 'hero_badge2_sub', icon: ThumbsUp },
-  { numKey: 'hero_badge3', subKey: 'hero_badge3_sub', icon: Clock },
-];
+const fadeUp = {
+  hidden: { opacity: 0, y: 26 },
+  visible: { opacity: 1, y: 0 },
+};
 
 export default function Hero() {
   const { t } = useLanguage();
+  const reduceMotion = useReducedMotion();
+
+  const trustItems = [
+    { titleKey: 'trust1_title', descKey: 'trust1_desc', Icon: MapPin },
+    { titleKey: 'trust2_title', descKey: 'trust2_desc', Icon: MessageCircle },
+    { titleKey: 'trust3_title', descKey: 'trust3_desc', Icon: Bike },
+  ];
 
   return (
-    <section
-      id="home"
-      className="relative min-h-screen flex items-center overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #36454F 0%, #2a3940 50%, #1a2830 100%)' }}
-    >
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <img
-          src="/hero_mechanic.png"
-          alt="Bike mechanic at work"
-          className="w-full h-full object-cover opacity-25"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1a2830]/95 via-[#36454F]/80 to-[#36454F]/40" />
-      </div>
+    <section id="home" className="relative overflow-hidden bg-ink text-white">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.045]"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, #ffffff 1px, transparent 1px)',
+          backgroundSize: '96px 100%',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-40 top-[-10%] h-[36rem] w-[36rem] rounded-full bg-accent/10 blur-[120px]"
+      />
 
-      {/* Decorative circles */}
-      <div className="absolute top-20 right-10 w-64 h-64 rounded-full bg-[#FF5733]/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 left-10 w-48 h-48 rounded-full bg-[#2563EB]/10 blur-3xl pointer-events-none" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-40">
-        <div className="max-w-3xl">
-          {/* Tag pill */}
+      <div className="container-page relative z-10 pb-12 pt-[7.25rem] sm:pb-16 lg:pb-20 lg:pt-[9.5rem]">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.06fr_0.94fr] lg:gap-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FF5733]/20 border border-[#FF5733]/40 mb-6"
+            initial={reduceMotion ? false : 'hidden'}
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.08 } },
+            }}
           >
-            <span className="w-2 h-2 rounded-full bg-[#FF5733] animate-pulse" />
-            <span className="text-[#FF5733] text-sm font-semibold tracking-wide">Sundaragiri's #1 Bike Mechanic</span>
+            <motion.p
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="eyebrow eyebrow-on-dark"
+            >
+              {t('hero_eyebrow')}
+            </motion.p>
+
+            <motion.h1
+              variants={fadeUp}
+              transition={{ duration: 0.6 }}
+              className="display-title mt-5 max-w-[13ch] text-[clamp(2.15rem,7.4vw,4.6rem)] text-white"
+            >
+              {t('hero_title')}{' '}
+              <span className="text-accent">{t('hero_title_accent')}</span>
+            </motion.h1>
+
+            <motion.p
+              variants={fadeUp}
+              transition={{ duration: 0.6 }}
+              className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/70 sm:text-lg"
+            >
+              {t('hero_desc')}
+            </motion.p>
+
+            <motion.div
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+            >
+              <a href="#book" className="btn btn-primary w-full sm:w-auto">
+                <MessageCircle aria-hidden="true" className="h-[18px] w-[18px]" />
+                {t('hero_cta')}
+                <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+              </a>
+              <a
+                href="#services"
+                className="btn btn-outline-light w-full sm:w-auto"
+              >
+                {t('hero_cta_secondary')}
+                <ArrowDown aria-hidden="true" className="h-4 w-4" />
+              </a>
+            </motion.div>
+
+            <motion.p
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="mt-4 flex items-start gap-2 text-[0.8125rem] leading-relaxed text-white/50"
+            >
+              <Check
+                aria-hidden="true"
+                className="mt-0.5 h-4 w-4 shrink-0 text-accent"
+              />
+              {t('hero_note')}
+            </motion.p>
           </motion.div>
 
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight mb-4"
-          >
-            {t('hero_title')}
-          </motion.h1>
+          <div className="relative mx-auto w-full max-w-[30rem] lg:max-w-none">
+            <div
+              aria-hidden="true"
+              className="absolute -left-2 -top-2 h-16 w-16 border-l-2 border-t-2 border-accent/70"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute -bottom-2 -right-2 h-16 w-16 border-b-2 border-r-2 border-white/15"
+            />
 
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-xl sm:text-2xl font-semibold text-[#FF5733] mb-4"
-          >
-            {t('hero_subtitle')}
-          </motion.p>
-
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-lg text-white/70 mb-10 max-w-xl leading-relaxed"
-          >
-            {t('hero_desc')}
-          </motion.p>
-
-          {/* CTA buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="flex flex-wrap gap-4 mb-14"
-          >
-            <a
-              href={WHATSAPP}
-              target="_blank"
-              rel="noreferrer"
-              id="hero-book-cta"
-              className="flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#FF5733] text-white font-bold text-base hover:bg-[#e04e2e] transition-all shadow-lg shadow-orange-700/30 hover:shadow-orange-700/50 hover:scale-105 active:scale-95"
+            <HeroScrub
+              src="/workshop-hero.jpg"
+              srcSet="/workshop-hero-480.jpg 480w, /workshop-hero.jpg 720w"
+              sizes="(min-width: 1024px) 470px, (min-width: 640px) 30rem, 92vw"
+              alt={t('hero_image_alt')}
+              width={720}
+              height={900}
+              className="aspect-[5/6] w-full rounded-[10px] ring-1 ring-white/10 sm:aspect-[4/5]"
             >
-              <MessageCircle className="w-5 h-5" />
-              {t('hero_cta')}
-            </a>
-            <a
-              href="#services"
-              id="hero-services-link"
-              className="flex items-center gap-2.5 px-7 py-3.5 rounded-full border-2 border-white/30 text-white font-semibold text-base hover:border-white hover:bg-white/10 transition-all"
-            >
-              {t('hero_cta2')}
-            </a>
-          </motion.div>
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-r from-ink/25 via-transparent to-transparent"
+              />
 
-          {/* Badges */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex flex-wrap gap-4"
-          >
-            {badges.map((b, i) => {
-              const Icon = b.icon;
-              return (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-[#FF5733]/30 flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-[#FF5733]" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-white text-base leading-tight">{t(b.numKey)}</div>
-                    <div className="text-white/60 text-xs">{t(b.subKey)}</div>
-                  </div>
+              <div className="absolute inset-x-3 bottom-3 z-10 flex items-center justify-between gap-3 rounded-[6px] border border-white/15 bg-ink/75 px-4 py-3 backdrop-blur-sm">
+                <div className="min-w-0">
+                  <p className="text-[0.625rem] font-bold uppercase tracking-[0.18em] text-accent-light">
+                    {t('hero_card_label')}
+                  </p>
+                  <p className="mt-1 truncate text-sm font-semibold text-white">
+                    {t('hero_card_meta')}
+                  </p>
                 </div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </div>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] bg-accent text-ink">
+                  <Bike aria-hidden="true" className="h-5 w-5" />
+                </span>
+              </div>
+            </HeroScrub>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/40"
-      >
-        <span className="text-xs tracking-widest uppercase">Scroll</span>
-        <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-          <ChevronDown className="w-5 h-5" />
-        </motion.div>
-      </motion.div>
+            <p
+              aria-hidden="true"
+              className="mt-4 text-center font-mono text-[0.625rem] uppercase tracking-[0.22em] text-white/35 lg:mt-5"
+            >
+              55VX+VRM · Sundaragiri
+            </p>
+          </div>
+        </div>
+
+        <ul className="mt-10 grid gap-4 border-t border-white/10 pt-6 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-white/10">
+          {trustItems.map(({ titleKey, descKey, Icon }, index) => (
+            <li
+              key={titleKey}
+              className={`flex items-start gap-3 ${
+                index > 0 ? 'sm:pl-5' : ''
+              } pr-2`}
+            >
+              <Icon
+                aria-hidden="true"
+                className="mt-0.5 h-[18px] w-[18px] shrink-0 text-accent"
+              />
+              <div>
+                <p className="text-[0.8125rem] font-semibold text-white">
+                  {t(titleKey)}
+                </p>
+                <p className="mt-0.5 text-xs leading-relaxed text-white/50">
+                  {t(descKey)}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

@@ -1,228 +1,113 @@
-
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { Settings, Zap, Droplets, AlertCircle, Wrench, Link2, X, Phone } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowUpRight,
+  Droplets,
+  Link2,
+  Settings,
+  Wrench,
+  Zap,
+} from 'lucide-react';
+import { services } from '../config/business';
+import { useBooking } from '../context/useBooking';
 import { useLanguage } from '../context/useLanguage';
+import Reveal from './ui/Reveal';
+import SectionHeading from './ui/SectionHeading';
 
-// ─── CONFIGURATION ─────────────────────────────────────────────────────────────
-const CALL_NUMBER = '+91 9110372978';
-// ────────────────────────────────────────────────────────────────────────────────
-
-const services = [
-  { titleKey: 'svc1_title', descKey: 'svc1_desc', icon: Settings,    color: '#FF5733' },
-  { titleKey: 'svc2_title', descKey: 'svc2_desc', icon: Zap,         color: '#2563EB' },
-  { titleKey: 'svc3_title', descKey: 'svc3_desc', icon: Droplets,    color: '#059669' },
-  { titleKey: 'svc4_title', descKey: 'svc4_desc', icon: AlertCircle, color: '#d97706' },
-  { titleKey: 'svc5_title', descKey: 'svc5_desc', icon: Wrench,      color: '#7c3aed' },
-  { titleKey: 'svc6_title', descKey: 'svc6_desc', icon: Link2,       color: '#0891b2' },
-];
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.5, ease: 'easeOut' }
-  }),
+const icons = {
+  settings: Settings,
+  engine: Zap,
+  oil: Droplets,
+  brake: AlertCircle,
+  wrench: Wrench,
+  chain: Link2,
 };
 
+const inr = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  maximumFractionDigits: 0,
+});
 
 export default function BikeServices() {
   const { t } = useLanguage();
-  const gridRef = useRef(null);
-  const inView = useInView(gridRef, { once: true, margin: '-80px' });
-  const [selectedService, setSelectedService] = useState(null); // null = modal closed
-  const modalRef = useRef(null);
-  const firstBtnRef = useRef(null);
-
-  /* ── Close on Escape key ── */
-  useEffect(() => {
-    if (!selectedService) return;
-    function onKey(e) {
-      if (e.key === 'Escape') setSelectedService(null);
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [selectedService]);
-
-  /* ── Focus first button when modal opens ── */
-  useEffect(() => {
-    if (selectedService) {
-      setTimeout(() => firstBtnRef.current?.focus(), 50);
-    }
-  }, [selectedService]);
-
-  /* ── Focus trap inside modal ── */
-  function handleModalKeyDown(e) {
-    if (e.key !== 'Tab' || !modalRef.current) return;
-    const focusable = modalRef.current.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const first = focusable[0];
-    const last  = focusable[focusable.length - 1];
-    if (e.shiftKey) {
-      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
-    } else {
-      if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
-    }
-  }
-
-  function onCardClick(serviceName) {
-    setSelectedService(serviceName);
-  }
-
-
-  function onCall() {
-    window.location.href = `tel:${CALL_NUMBER}`;
-    setSelectedService(null);
-  }
+  const { openBooking } = useBooking();
 
   return (
-    <section id="services" className="section-padding bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-orange-100 text-brand-orange text-sm font-semibold mb-4">
-            What We Do
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-charcoal mb-4">{t('services_title')}</h2>
-          <p className="text-gray-500 text-lg max-w-xl mx-auto">{t('services_subtitle')}</p>
-        </motion.div>
+    <section id="services" className="section-y scroll-mt-24 bg-cream">
+      <div className="container-page">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <SectionHeading
+            eyebrowKey="services_eyebrow"
+            titleKey="services_title"
+            subtitleKey="services_subtitle"
+          />
+          <Reveal delay={0.1} className="shrink-0">
+            <a
+              href="#pricing"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-ink underline decoration-accent decoration-2 underline-offset-4 transition-colors hover:text-accent-dark"
+            >
+              {t('pricing_eyebrow')}
+              <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+            </a>
+          </Reveal>
+        </div>
 
-        {/* Grid */}
-        <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((svc, i) => {
-            const Icon = svc.icon;
-            const title = t(svc.titleKey);
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3 lg:gap-5">
+          {services.map((service, index) => {
+            const Icon = icons[service.icon] || Wrench;
+            const title = t(service.nameKey);
+
             return (
-              <motion.div
-                key={i}
-                custom={i}
-                variants={cardVariants}
-                initial="hidden"
-                animate={inView ? 'visible' : 'hidden'}
-                whileHover={{ y: -6, boxShadow: `0 12px 32px ${svc.color}22` }}
-                onClick={() => onCardClick(title)}
-                role="button"
-                tabIndex={0}
-                aria-label={`Book ${title}`}
-                onKeyDown={(e) => e.key === 'Enter' && onCardClick(title)}
-                className="group relative bg-white rounded-2xl p-7 border border-gray-100 card-shadow cursor-pointer transition-all duration-300"
-              >
-                {/* Icon */}
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: `${svc.color}15` }}
-                >
-                  <Icon className="w-7 h-7" style={{ color: svc.color }} />
-                </div>
+              <Reveal key={service.id} delay={index * 0.05}>
+                <article className="group flex h-full flex-col rounded-[10px] border border-line bg-white p-6 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-ink/25 hover:shadow-[0_22px_50px_-34px_rgba(21,27,34,0.55)]">
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-[6px] border border-accent/20 bg-accent/10 text-accent-dark transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-ink">
+                      <Icon aria-hidden="true" className="h-5 w-5" />
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="font-mono text-[0.6875rem] font-medium tracking-[0.18em] text-muted/70"
+                    >
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                  </div>
 
-                {/* Number badge */}
-                <span
-                  className="absolute top-5 right-5 text-5xl font-black opacity-5 select-none"
-                  style={{ color: svc.color }}
-                >
-                  {String(i + 1).padStart(2, '0')}
-                </span>
+                  <h3 className="mt-5 font-display text-[1.125rem] font-bold leading-snug text-ink">
+                    {title}
+                  </h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">
+                    {t(service.descKey)}
+                  </p>
 
-                <h3 className="text-lg font-bold text-brand-charcoal mb-2">{title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{t(svc.descKey)}</p>
+                  <div className="mt-5 border-t border-line pt-4">
+                    <p className="text-[0.8125rem] font-semibold text-ink">
+                      {service.price !== null
+                        ? `${t('pricing_from')} ${inr.format(service.price)}`
+                        : t('price_estimate')}
+                    </p>
+                    <p className="mt-0.5 text-[0.6875rem] text-muted">
+                      {t('price_after_inspection')}
+                    </p>
 
-                {/* Bottom accent */}
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-1 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ background: `linear-gradient(90deg, ${svc.color}, ${svc.color}88)` }}
-                />
-              </motion.div>
+                    <button
+                      type="button"
+                      onClick={() => openBooking(service.id)}
+                      aria-label={`${t('services_book_aria')} ${title}`}
+                      className="mt-4 inline-flex min-h-9 items-center gap-1.5 text-sm font-semibold text-accent-dark transition-colors hover:text-ink"
+                    >
+                      {t('services_book')}
+                      <ArrowUpRight
+                        aria-hidden="true"
+                        className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      />
+                    </button>
+                  </div>
+                </article>
+              </Reveal>
             );
           })}
         </div>
       </div>
-
-      {/* ── Contact Popup Modal ─────────────────────────────────────────────────── */}
-      <AnimatePresence>
-        {selectedService && (
-          // Backdrop — clicking the dark area closes the modal
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            className="fixed inset-0 z-50 flex items-center justify-center px-4"
-            style={{ backdropFilter: 'blur(6px)', background: 'rgba(0,0,0,0.45)' }}
-            onClick={() => setSelectedService(null)}
-            aria-hidden="true"
-          >
-            {/* Modal card — stopPropagation keeps backdrop onClick from firing */}
-            <motion.div
-              key="modal"
-              ref={modalRef}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="modal-title"
-              onKeyDown={handleModalKeyDown}
-              onClick={(e) => e.stopPropagation()}
-              initial={{ opacity: 0, scale: 0.92, y: 24 }}
-              animate={{ opacity: 1, scale: 1,    y: 0  }}
-              exit={{   opacity: 0, scale: 0.92, y: 24  }}
-              transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-              className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 relative"
-            >
-              {/* Close ✕ */}
-              <button
-                onClick={() => setSelectedService(null)}
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
-                aria-label="Close popup"
-              >
-                <X className="w-4 h-4" />
-              </button>
-
-              {/* Title */}
-              <h3 id="modal-title" className="text-xl font-extrabold text-brand-charcoal mb-2">
-                Need This Service?
-              </h3>
-
-              {/* Subtitle */}
-              <p className="text-sm text-gray-500 mb-1">
-                You selected:{' '}
-                <span className="font-semibold text-gray-700">{selectedService}</span>
-              </p>
-              <p className="text-sm text-gray-400 mb-7">
-                Call us now to book this service or discuss your bike problem.
-              </p>
-
-              {/* Action buttons */}
-              <div className="flex flex-col gap-3">
-                {/* Call Now */}
-                <button
-                  ref={firstBtnRef}
-                  onClick={onCall}
-                  className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-orange-400"
-                  style={{ background: 'linear-gradient(135deg, #FF5733, #c0392b)' }}
-                >
-                  <Phone className="w-5 h-5 shrink-0" />
-                  Call Now
-                </button>
-
-                {/* Cancel */}
-                <button
-                  onClick={() => setSelectedService(null)}
-                  className="w-full px-5 py-3 rounded-xl font-semibold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-gray-300"
-                >
-                  ✖ Cancel
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }

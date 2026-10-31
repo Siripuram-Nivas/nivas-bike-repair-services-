@@ -1,62 +1,90 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ShieldCheck, DollarSign, Clock, Star, Award, Heart } from 'lucide-react';
+import {
+  ClipboardCheck,
+  Heart,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Wrench,
+} from 'lucide-react';
 import { useLanguage } from '../context/useLanguage';
+import Reveal from './ui/Reveal';
+import SectionHeading from './ui/SectionHeading';
 
 const features = [
-  { titleKey: 'why1_title', descKey: 'why1_desc', icon: ShieldCheck },
-  { titleKey: 'why2_title', descKey: 'why2_desc', icon: DollarSign },
-  { titleKey: 'why3_title', descKey: 'why3_desc', icon: Clock },
-  { titleKey: 'why4_title', descKey: 'why4_desc', icon: Star },
-  { titleKey: 'why5_title', descKey: 'why5_desc', icon: Award },
-  { titleKey: 'why6_title', descKey: 'why6_desc', icon: Heart },
+  { titleKey: 'why1_title', descKey: 'why1_desc', Icon: Heart },
+  { titleKey: 'why2_title', descKey: 'why2_desc', Icon: MessageCircle },
+  { titleKey: 'why3_title', descKey: 'why3_desc', Icon: ClipboardCheck },
+  { titleKey: 'why4_title', descKey: 'why4_desc', Icon: Wrench },
+  { titleKey: 'why5_title', descKey: 'why5_desc', Icon: MapPin },
+  { titleKey: 'why6_title', descKey: 'why6_desc', Icon: Phone },
 ];
 
 export default function WhyChooseUs() {
   const { t } = useLanguage();
 
   return (
-    <section id="why" className="section-padding" style={{ background: 'linear-gradient(135deg, #FFFDD0 0%, #fff9e6 100%)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-[#FF5733]/10 text-[#FF5733] text-sm font-semibold mb-4">
-            Our Promise
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#36454F] mb-4">{t('why_title')}</h2>
-          <p className="text-gray-500 text-lg max-w-xl mx-auto">{t('why_subtitle')}</p>
-        </motion.div>
+    <section id="why" className="section-y scroll-mt-24 bg-white">
+      <div className="container-page">
+        <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-start lg:gap-16">
+          <Reveal className="order-2 lg:order-1">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[10px] ring-1 ring-line lg:aspect-auto lg:min-h-[34rem]">
+              <img
+                src="/workshop-detail.jpg"
+                srcSet="/workshop-detail-640.jpg 640w, /workshop-detail.jpg 1024w"
+                sizes="(min-width: 1024px) 45vw, 92vw"
+                alt={t('why_image_alt')}
+                width={1024}
+                height={640}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/15 to-transparent"
+              />
+              <div className="absolute inset-x-4 bottom-4 border-l-2 border-accent bg-ink/85 p-4 backdrop-blur-sm">
+                <p className="text-[0.625rem] font-bold uppercase tracking-[0.18em] text-accent-light">
+                  {t('why_badge_title')}
+                </p>
+                <p className="mt-1 text-sm font-medium leading-relaxed text-white/85">
+                  {t('why_badge_text')}
+                </p>
+              </div>
+            </div>
+          </Reveal>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((f, i) => {
-            const Icon = f.icon;
-            return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                whileHover={{ y: -4 }}
-                className="flex gap-4 p-6 bg-white rounded-2xl card-shadow border border-orange-50 group transition-all duration-300"
-              >
-                <div className="shrink-0 w-12 h-12 rounded-xl bg-[#FF5733]/10 flex items-center justify-center group-hover:bg-[#FF5733] transition-colors">
-                  <Icon className="w-6 h-6 text-[#FF5733] group-hover:text-white transition-colors" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-[#36454F] mb-1 text-base">{t(f.titleKey)}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{t(f.descKey)}</p>
-                </div>
-              </motion.div>
-            );
-          })}
+          <div className="order-1 lg:order-2">
+            <SectionHeading
+              eyebrowKey="why_eyebrow"
+              titleKey="why_title"
+              subtitleKey="why_subtitle"
+            />
+
+            <div className="mt-8 grid gap-x-8 sm:grid-cols-2">
+              {features.map(({ titleKey, descKey, Icon }, index) => (
+                <Reveal
+                  key={titleKey}
+                  delay={index * 0.04}
+                  className="group border-t border-line py-5"
+                >
+                  <div className="flex items-start gap-3.5">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-line text-accent-dark transition-colors duration-300 group-hover:border-ink group-hover:bg-ink group-hover:text-accent-light">
+                      <Icon aria-hidden="true" className="h-[18px] w-[18px]" />
+                    </span>
+                    <div>
+                      <h3 className="font-display text-[0.9375rem] font-bold leading-snug text-ink">
+                        {t(titleKey)}
+                      </h3>
+                      <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-muted">
+                        {t(descKey)}
+                      </p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

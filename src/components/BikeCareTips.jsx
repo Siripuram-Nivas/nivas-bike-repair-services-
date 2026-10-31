@@ -1,58 +1,57 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { CalendarCheck, Gauge, Link2, FlaskConical } from 'lucide-react';
+import { CalendarCheck, FlaskConical, Gauge, Link2 } from 'lucide-react';
 import { useLanguage } from '../context/useLanguage';
+import Reveal from './ui/Reveal';
+import SectionHeading from './ui/SectionHeading';
 
 const tips = [
-  { titleKey: 'tip1_title', descKey: 'tip1_desc', icon: CalendarCheck, gradient: 'from-orange-500 to-orange-400' },
-  { titleKey: 'tip2_title', descKey: 'tip2_desc', icon: Gauge, gradient: 'from-blue-600 to-blue-400' },
-  { titleKey: 'tip3_title', descKey: 'tip3_desc', icon: Link2, gradient: 'from-emerald-600 to-emerald-400' },
-  { titleKey: 'tip4_title', descKey: 'tip4_desc', icon: FlaskConical, gradient: 'from-amber-600 to-amber-400' },
+  { titleKey: 'tip1_title', descKey: 'tip1_desc', Icon: CalendarCheck },
+  { titleKey: 'tip2_title', descKey: 'tip2_desc', Icon: Gauge },
+  { titleKey: 'tip3_title', descKey: 'tip3_desc', Icon: Link2 },
+  { titleKey: 'tip4_title', descKey: 'tip4_desc', Icon: FlaskConical },
 ];
 
 export default function BikeCareTips() {
   const { t } = useLanguage();
 
   return (
-    <section id="tips" className="section-padding" style={{ background: 'linear-gradient(135deg, #36454F 0%, #2a3940 100%)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-sm font-semibold mb-4">
-            Pro Tips
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">{t('tips_title')}</h2>
-          <p className="text-white/60 text-lg max-w-xl mx-auto">{t('tips_subtitle')}</p>
-        </motion.div>
+    <section id="tips" className="scroll-mt-24 bg-graphite py-16 text-white md:py-20">
+      <div className="container-page">
+        <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeading
+            eyebrowKey="tips_eyebrow"
+            titleKey="tips_title"
+            subtitleKey="tips_subtitle"
+            dark
+          />
 
-        {/* Tips grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {tips.map((tip, i) => {
-            const Icon = tip.icon;
-            return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                whileHover={{ y: -6 }}
-                className="group bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300"
+          <div className="grid gap-x-8 gap-y-8 sm:grid-cols-2">
+            {tips.map(({ titleKey, descKey, Icon }, index) => (
+              <Reveal
+                key={titleKey}
+                delay={index * 0.04}
+                className="group border-t border-white/15 pt-5"
               >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tip.gradient} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform`}>
-                  <Icon className="w-6 h-6 text-white" />
+                <div className="flex items-center justify-between gap-4">
+                  <Icon
+                    aria-hidden="true"
+                    className="h-5 w-5 text-accent transition-transform duration-300 group-hover:-translate-y-0.5"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="font-mono text-[0.625rem] tracking-[0.18em] text-white/25"
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
                 </div>
-                <h3 className="font-bold text-white text-base mb-2">{t(tip.titleKey)}</h3>
-                <p className="text-white/60 text-sm leading-relaxed">{t(tip.descKey)}</p>
-              </motion.div>
-            );
-          })}
+                <h3 className="mt-4 font-display text-[0.9375rem] font-bold text-white">
+                  {t(titleKey)}
+                </h3>
+                <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-white/55">
+                  {t(descKey)}
+                </p>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </div>
     </section>
