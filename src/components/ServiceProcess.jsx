@@ -1,22 +1,13 @@
-import {
-  Bike,
-  CheckCircle2,
-  ClipboardList,
-  MessageCircle,
-  Phone,
-  Search,
-} from 'lucide-react';
+import { Bike, MessageCircle, Send, Wrench } from 'lucide-react';
 import { useLanguage } from '../context/useLanguage';
 import Reveal from './ui/Reveal';
 import SectionHeading from './ui/SectionHeading';
 
 const steps = [
-  { titleKey: 'p1_title', descKey: 'p1_desc', Icon: Phone },
-  { titleKey: 'p2_title', descKey: 'p2_desc', Icon: MessageCircle },
-  { titleKey: 'p3_title', descKey: 'p3_desc', Icon: Search },
-  { titleKey: 'p4_title', descKey: 'p4_desc', Icon: ClipboardList },
-  { titleKey: 'p5_title', descKey: 'p5_desc', Icon: CheckCircle2 },
-  { titleKey: 'p6_title', descKey: 'p6_desc', Icon: Bike },
+  { titleKey: 'step1_title', descKey: 'step1_desc', Icon: Wrench },
+  { titleKey: 'step2_title', descKey: 'step2_desc', Icon: Send },
+  { titleKey: 'step3_title', descKey: 'step3_desc', Icon: MessageCircle },
+  { titleKey: 'step4_title', descKey: 'step4_desc', Icon: Bike },
 ];
 
 export default function ServiceProcess() {
@@ -31,35 +22,36 @@ export default function ServiceProcess() {
             titleKey="process_title"
             subtitleKey="process_subtitle"
           />
-          <a href="#book" className="btn btn-dark shrink-0 self-start md:self-auto">
-            {t('nav_book')}
+          <a
+            href="#book"
+            className="btn btn-dark shrink-0 self-start md:self-auto"
+          >
+            {t('process_cta')}
           </a>
         </div>
 
-        <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3 lg:gap-5">
+        <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:mt-12 lg:grid-cols-4 lg:gap-5">
           {steps.map(({ titleKey, descKey, Icon }, index) => (
-            <li key={titleKey}>
+            <li key={titleKey} className="h-full">
               <Reveal
                 delay={index * 0.05}
-                className="group relative h-full overflow-hidden rounded-[10px] border border-line bg-white p-6 transition-colors duration-300 hover:border-accent/50"
+                className="group relative h-full rounded-[5px] border border-line border-t-2 border-t-ink/15 bg-white p-6 transition-colors duration-300 hover:border-t-accent"
               >
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute -right-2 -top-4 font-display text-[5.5rem] font-extrabold leading-none text-ink/[0.045]"
+                  className="pointer-events-none absolute right-4 top-3 font-display text-[3.75rem] font-extrabold leading-none text-ink/45"
                 >
                   {String(index + 1).padStart(2, '0')}
                 </span>
 
-                <div className="relative flex items-center justify-between gap-4">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-[5px] bg-ink text-accent-light transition-colors duration-300 group-hover:bg-accent group-hover:text-ink">
-                    <Icon aria-hidden="true" className="h-[18px] w-[18px]" />
-                  </span>
-                  <span className="font-mono text-[0.625rem] font-semibold uppercase tracking-[0.18em] text-muted">
-                    {t('process_step')} {String(index + 1).padStart(2, '0')}
-                  </span>
-                </div>
+                <span className="relative flex h-11 w-11 items-center justify-center rounded-[4px] bg-ink text-accent-light transition-colors duration-300 group-hover:bg-accent group-hover:text-ink">
+                  <Icon aria-hidden="true" className="h-5 w-5" />
+                </span>
 
-                <h3 className="relative mt-5 font-display text-[1rem] font-bold leading-snug text-ink">
+                <p className="relative mt-4 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.18em] text-muted">
+                  {t('process_step')} {String(index + 1).padStart(2, '0')}
+                </p>
+                <h3 className="relative mt-1.5 font-display text-[1.05rem] font-bold leading-snug text-ink">
                   {t(titleKey)}
                 </h3>
                 <p className="relative mt-1.5 text-[0.8125rem] leading-relaxed text-muted">
@@ -69,6 +61,16 @@ export default function ServiceProcess() {
             </li>
           ))}
         </ol>
+
+        <Reveal delay={0.1}>
+          <p className="mt-6 flex items-start gap-2 text-[0.75rem] leading-relaxed text-muted">
+            <span
+              aria-hidden="true"
+              className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
+            />
+            {t('process_note')}
+          </p>
+        </Reveal>
       </div>
     </section>
   );

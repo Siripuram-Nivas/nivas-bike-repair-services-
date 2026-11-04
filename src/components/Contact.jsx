@@ -46,10 +46,10 @@ export default function Contact() {
                       rel="noopener noreferrer"
                       className="mt-0.5 block text-sm leading-relaxed text-graphite/75 underline decoration-line decoration-1 underline-offset-4 transition-colors hover:text-accent-dark"
                     >
-                      {t('contact_address')}
+                      {business.address.display}
                     </a>
                     <p className="mt-1 text-[0.6875rem] text-muted">
-                      {t('contact_plus_code')}
+                      {t('contact_plus_code')}: {business.plusCode}
                     </p>
                   </div>
                 </div>
@@ -82,16 +82,16 @@ export default function Contact() {
                       {t('contact_hours_label')}
                     </p>
                     <p className="mt-1 text-[0.9375rem] font-semibold text-ink">
-                      {t('contact_hours')}
+                      {t('contact_hours_days')}
                     </p>
                     <p className="mt-0.5 text-[0.8125rem] text-muted">
-                      {t('contact_hours_note')}
+                      {business.hours.time} · {t('contact_hours_note')}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
                 <a
                   href={generalEnquiryUrl}
                   target="_blank"
@@ -103,12 +103,19 @@ export default function Contact() {
                   <span className="sr-only"> ({t('new_tab')})</span>
                 </a>
                 <a
+                  href={business.phone.telHref}
+                  className="btn btn-outline-dark w-full whitespace-nowrap sm:w-auto"
+                >
+                  <Phone aria-hidden="true" className="h-[17px] w-[17px]" />
+                  {t('contact_call')}
+                </a>
+                <a
                   href={business.maps.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline-dark w-full whitespace-nowrap sm:w-auto"
                 >
-                  <Navigation aria-hidden="true" className="h-[18px] w-[18px]" />
+                  <Navigation aria-hidden="true" className="h-[17px] w-[17px]" />
                   {t('contact_directions')}
                   <span className="sr-only"> ({t('new_tab')})</span>
                 </a>
@@ -117,14 +124,14 @@ export default function Contact() {
           </div>
 
           <Reveal delay={0.12}>
-            <div className="overflow-hidden rounded-[10px] border border-line bg-white">
+            <div className="overflow-hidden rounded-[6px] border border-line bg-white">
               <div className="relative aspect-[4/3] w-full sm:aspect-[16/10]">
                 <iframe
                   title={t('contact_map_title')}
                   src={business.maps.embedUrl}
                   width="1024"
                   height="640"
-                  loading="lazy"
+                  loading="eager"
                   referrerPolicy="no-referrer-when-downgrade"
                   allowFullScreen
                   className="absolute inset-0 h-full w-full border-0"

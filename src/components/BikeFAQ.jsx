@@ -36,11 +36,11 @@ function FAQItem({ item, index, isOpen, onToggle }) {
           <span className="flex gap-3">
             <span
               aria-hidden="true"
-              className="mt-0.5 font-mono text-[0.6875rem] font-medium tracking-wider text-muted/70"
+              className="mt-0.5 font-mono text-[0.6875rem] font-medium tracking-wider text-muted"
             >
               {String(index + 1).padStart(2, '0')}
             </span>
-            <span className="font-display text-[0.9375rem] font-bold leading-snug text-ink sm:text-[1rem]">
+            <span className="font-display text-[1rem] font-bold leading-snug text-ink sm:text-[1.0625rem]">
               {t(item.qKey)}
             </span>
           </span>
@@ -99,8 +99,8 @@ export default function BikeFAQ() {
             />
 
             <Reveal delay={0.08}>
-              <div className="mt-8 rounded-[10px] border border-line bg-cream p-5">
-                <p className="font-display text-[0.9375rem] font-bold text-ink">
+              <div className="mt-8 rounded-[5px] border border-line bg-cream p-5">
+                <p className="font-display text-[1rem] font-bold text-ink">
                   {t('faq_contact')}
                 </p>
                 <a

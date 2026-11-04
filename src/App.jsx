@@ -3,8 +3,8 @@ import { BookingProvider } from './context/BookingContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import BikeServices from './components/BikeServices';
-import Pricing from './components/Pricing';
 import WhyChooseUs from './components/WhyChooseUs';
+import Gallery from './components/Gallery';
 import ServiceProcess from './components/ServiceProcess';
 import BikeCareTips from './components/BikeCareTips';
 import Reviews from './components/Reviews';
@@ -38,8 +38,8 @@ function App() {
           <main id="main-content">
             <Hero />
             <BikeServices />
-            <Pricing />
             <WhyChooseUs />
+            <Gallery />
             <ServiceProcess />
             <BikeCareTips />
             <Reviews />

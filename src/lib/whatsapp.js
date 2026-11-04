@@ -1,4 +1,5 @@
 import { business } from '../config/business';
+import { formatDateLabel, formatTimeLabel } from './datetime';
 
 /** Build a wa.me link with a safely URL-encoded message. */
 export function buildWhatsAppUrl(message) {
@@ -10,10 +11,20 @@ export const generalEnquiryUrl = buildWhatsAppUrl(
   `Hello ${business.name}!\n\nI would like to book a bike service. Please share the next available appointment.`,
 );
 
-/** Feedback invitation used in the reviews section. */
+/** Feedback invitation used in the feedback section. */
 export const feedbackUrl = buildWhatsAppUrl(
   `Hello ${business.name}!\n\nI recently had my bike serviced with you and would like to share some feedback:\n\n`,
 );
+
+/**
+ * Format an Indian mobile number for display in the message.
+ * Falls back to the raw value if it cannot be normalised.
+ */
+export function formatIndianPhone(value) {
+  const local = normaliseIndianMobile(value);
+  if (!local) return String(value).trim();
+  return `+91 ${local.slice(0, 5)} ${local.slice(5)}`;
+}
 
 /**
  * Build the booking message. Mirrors the format requested by the business.
@@ -33,21 +44,26 @@ export function buildBookingMessage({
   const lines = [
     `Hello ${business.name}!`,
     '',
-    'I would like to book a bike service.',
+    'I would like to request a bike service.',
     '',
-    `Name: ${name.trim()}`,
-    `Phone: ${phone.trim()}`,
-    `Bike: ${`${brand} ${model}`.trim()}`,
     `Service: ${service}`,
-    `Preferred Date: ${date}`,
-    `Preferred Time: ${time}`,
+    `Bike: ${`${brand} ${model}`.trim()}`,
+    `Name: ${name.trim()}`,
+    `Phone: ${formatIndianPhone(phone)}`,
+    `Preferred date: ${formatDateLabel(date)}`,
+    `Preferred time: ${formatTimeLabel(time)}`,
   ];
 
   if (problem.trim()) {
     lines.push(`Problem: ${problem.trim()}`);
   }
 
-  lines.push('', 'Please confirm the appointment availability.');
+  lines.push(
+    '',
+    'Please confirm the appointment availability.',
+    '',
+    '(Sent from the Nivas Bike Repair website.)',
+  );
 
   return lines.join('\n');
 }

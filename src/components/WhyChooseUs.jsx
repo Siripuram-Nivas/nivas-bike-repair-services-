@@ -1,11 +1,13 @@
 import {
   ClipboardCheck,
   Heart,
+  Info,
   MapPin,
   MessageCircle,
   Phone,
   Wrench,
 } from 'lucide-react';
+import { business } from '../config/business';
 import { useLanguage } from '../context/useLanguage';
 import Reveal from './ui/Reveal';
 import SectionHeading from './ui/SectionHeading';
@@ -21,33 +23,34 @@ const features = [
 
 export default function WhyChooseUs() {
   const { t } = useLanguage();
+  const whyImage = business.images.why;
 
   return (
     <section id="why" className="section-y scroll-mt-24 bg-white">
       <div className="container-page">
         <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-start lg:gap-16">
           <Reveal className="order-2 lg:order-1">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[10px] ring-1 ring-line lg:aspect-auto lg:min-h-[34rem]">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[6px] ring-1 ring-line sm:aspect-[5/6] lg:aspect-auto lg:min-h-[36rem]">
               <img
-                src="/workshop-detail.jpg"
-                srcSet="/workshop-detail-640.jpg 640w, /workshop-detail.jpg 1024w"
-                sizes="(min-width: 1024px) 45vw, 92vw"
-                alt={t('why_image_alt')}
-                width={1024}
-                height={640}
+                src={whyImage.src}
+                srcSet={whyImage.srcSet}
+                sizes="(min-width: 1024px) 42vw, 92vw"
+                alt={t(whyImage.altKey)}
+                width={whyImage.width}
+                height={whyImage.height}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 h-full w-full object-cover"
               />
               <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/15 to-transparent"
+                className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/15 to-transparent"
               />
               <div className="absolute inset-x-4 bottom-4 border-l-2 border-accent bg-ink/85 p-4 backdrop-blur-sm">
-                <p className="text-[0.625rem] font-bold uppercase tracking-[0.18em] text-accent-light">
+                <p className="text-[0.5625rem] font-bold uppercase tracking-[0.2em] text-accent-light">
                   {t('why_badge_title')}
                 </p>
-                <p className="mt-1 text-sm font-medium leading-relaxed text-white/85">
+                <p className="mt-1.5 text-[0.8125rem] font-medium leading-relaxed text-white/85">
                   {t('why_badge_text')}
                 </p>
               </div>
@@ -69,7 +72,7 @@ export default function WhyChooseUs() {
                   className="group border-t border-line py-5"
                 >
                   <div className="flex items-start gap-3.5">
-                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[5px] border border-line text-accent-dark transition-colors duration-300 group-hover:border-ink group-hover:bg-ink group-hover:text-accent-light">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] border border-line text-accent-dark transition-colors duration-300 group-hover:border-ink group-hover:bg-ink group-hover:text-accent-light">
                       <Icon aria-hidden="true" className="h-[18px] w-[18px]" />
                     </span>
                     <div>
@@ -84,6 +87,16 @@ export default function WhyChooseUs() {
                 </Reveal>
               ))}
             </div>
+
+            <Reveal delay={0.1}>
+              <p className="mt-6 flex items-start gap-2 border-l-2 border-accent bg-cream px-4 py-3 text-[0.8125rem] font-medium leading-relaxed text-graphite">
+                <Info
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-accent-dark"
+                />
+                {t('why_note')}
+              </p>
+            </Reveal>
           </div>
         </div>
       </div>

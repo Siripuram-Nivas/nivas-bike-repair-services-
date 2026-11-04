@@ -97,7 +97,7 @@ export default function Navbar() {
       <header
         className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ${
           solid
-            ? 'border-line bg-cream/95 shadow-[0_10px_30px_-24px_rgba(21,27,34,0.5)] backdrop-blur-md'
+            ? 'border-line bg-cream/95 shadow-[0_10px_30px_-26px_rgba(14,17,22,0.6)] backdrop-blur-md'
             : 'border-transparent bg-transparent'
         }`}
       >
@@ -108,11 +108,12 @@ export default function Navbar() {
               className="shrink-0 rounded-sm focus-visible:outline-offset-4"
             >
               <Logo onDark={!solid} />
+              <span className="sr-only"> — {t('nav_home')}</span>
             </a>
 
             <nav
               aria-label={t('nav_aria')}
-              className="hidden items-center gap-0.5 xl:flex"
+              className="hidden items-center xl:flex"
             >
               {navLinks.map((link) => {
                 const isActive = active === link.id;
@@ -121,20 +122,20 @@ export default function Navbar() {
                     key={link.id}
                     href={`#${link.id}`}
                     aria-current={isActive ? 'location' : undefined}
-                    className={`relative whitespace-nowrap px-3 py-2.5 text-[0.8125rem] font-semibold transition-colors ${
+                    className={`relative whitespace-nowrap px-2.5 py-2.5 text-[0.75rem] font-semibold transition-colors ${
                       solid
                         ? isActive
                           ? 'text-ink'
-                          : 'text-graphite/70 hover:text-ink'
+                          : 'text-graphite/65 hover:text-ink'
                         : isActive
                           ? 'text-white'
-                          : 'text-white/65 hover:text-white'
+                          : 'text-white/60 hover:text-white'
                     }`}
                   >
                     {t(link.key)}
                     <span
                       aria-hidden="true"
-                      className={`absolute inset-x-3 -bottom-px h-[2px] origin-left bg-accent transition-transform duration-300 ${
+                      className={`absolute inset-x-2.5 -bottom-px h-[2px] origin-left bg-accent transition-transform duration-300 ${
                         isActive ? 'scale-x-100' : 'scale-x-0'
                       }`}
                     />
@@ -147,7 +148,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setLang(lang === 'en' ? 'te' : 'en')}
-                className={`hidden h-9 items-center whitespace-nowrap rounded-[6px] border px-3 text-xs font-semibold transition-colors md:inline-flex ${
+                className={`hidden h-9 items-center whitespace-nowrap rounded-[4px] border px-3 text-[0.6875rem] font-semibold transition-colors md:inline-flex ${
                   solid
                     ? 'border-line text-graphite hover:border-ink hover:text-ink'
                     : 'border-white/25 text-white/80 hover:border-white/60 hover:text-white'
@@ -159,7 +160,7 @@ export default function Navbar() {
 
               <a
                 href="#book"
-                className="btn btn-primary hidden whitespace-nowrap !min-h-10 !px-4 !py-2 !text-[0.8125rem] md:inline-flex"
+                className="btn btn-primary hidden whitespace-nowrap !min-h-10 !px-4 !py-2 !text-[0.75rem] md:inline-flex"
               >
                 {t('nav_book')}
                 <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
@@ -171,7 +172,7 @@ export default function Navbar() {
                 aria-expanded={open}
                 aria-controls="mobile-navigation"
                 aria-label={open ? t('nav_close') : t('nav_menu')}
-                className={`inline-flex h-10 w-10 items-center justify-center rounded-[6px] border transition-colors xl:hidden ${
+                className={`inline-flex h-10 w-10 items-center justify-center rounded-[4px] border transition-colors xl:hidden ${
                   solid
                     ? 'border-line text-ink hover:bg-ink hover:text-white'
                     : 'border-white/25 text-white hover:bg-white/10'
@@ -204,7 +205,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="absolute inset-0 h-full w-full cursor-default bg-ink/70 backdrop-blur-sm"
+              className="absolute inset-0 h-full w-full cursor-default bg-ink/75 backdrop-blur-sm"
             />
 
             <motion.div
@@ -226,10 +227,28 @@ export default function Navbar() {
                   data-close-menu
                   onClick={() => setOpen(false)}
                   aria-label={t('nav_close')}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-[6px] border border-line text-ink transition-colors hover:bg-ink hover:text-white"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-[4px] border border-line text-ink transition-colors hover:bg-ink hover:text-white"
                 >
                   <X aria-hidden="true" className="h-5 w-5" />
                 </button>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 border-b border-line bg-white px-5 py-3">
+                <div>
+                  <p className="text-[0.5625rem] font-bold uppercase tracking-[0.18em] text-muted">
+                    {t('contact_hours_label')}
+                  </p>
+                  <p className="mt-1 text-[0.8125rem] font-semibold text-ink">
+                    {t('hero_hours_value')}
+                  </p>
+                </div>
+                <a
+                  href={business.phone.telHref}
+                  aria-label={t('contact_call')}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] bg-ink text-accent-light transition-colors hover:bg-accent hover:text-ink"
+                >
+                  <Phone aria-hidden="true" className="h-4 w-4" />
+                </a>
               </div>
 
               <nav
@@ -271,7 +290,7 @@ export default function Navbar() {
                       type="button"
                       onClick={() => setLang('en')}
                       aria-pressed={lang === 'en'}
-                      className={`min-h-10 rounded-[6px] border px-3 text-sm font-semibold transition-colors ${
+                      className={`min-h-10 rounded-[4px] border px-3 text-sm font-semibold transition-colors ${
                         lang === 'en'
                           ? 'border-ink bg-ink text-white'
                           : 'border-line bg-white text-graphite hover:border-ink'
@@ -284,7 +303,7 @@ export default function Navbar() {
                       onClick={() => setLang('te')}
                       aria-pressed={lang === 'te'}
                       lang="te"
-                      className={`min-h-10 rounded-[6px] border px-3 text-sm font-semibold transition-colors ${
+                      className={`min-h-10 rounded-[4px] border px-3 text-sm font-semibold transition-colors ${
                         lang === 'te'
                           ? 'border-ink bg-ink text-white'
                           : 'border-line bg-white text-graphite hover:border-ink'

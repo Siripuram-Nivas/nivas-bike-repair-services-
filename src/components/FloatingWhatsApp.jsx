@@ -19,7 +19,7 @@ export default function FloatingWhatsApp() {
         <MessageCircle aria-hidden="true" className="relative z-10 h-6 w-6" />
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute right-[calc(100%+0.6rem)] whitespace-nowrap rounded-[4px] border border-line bg-white px-3 py-1.5 text-xs font-semibold text-ink opacity-0 shadow-md transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
+          className="pointer-events-none absolute right-[calc(100%+0.6rem)] whitespace-nowrap rounded-[3px] border border-line bg-white px-3 py-1.5 text-xs font-semibold text-ink opacity-0 shadow-md transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
         >
           {t('floating_label')}
         </span>

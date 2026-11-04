@@ -1,4 +1,4 @@
-import { ExternalLink, MapPin, MessageCircle, Quote } from 'lucide-react';
+import { ExternalLink, MapPin, MessageCircle, Quote, ShieldCheck } from 'lucide-react';
 import { business } from '../config/business';
 import { feedbackUrl } from '../lib/whatsapp';
 import { useLanguage } from '../context/useLanguage';
@@ -27,32 +27,46 @@ export default function Reviews() {
               <p className="mt-5 max-w-xl text-[0.9375rem] leading-relaxed text-graphite/75">
                 {t('reviews_body')}
               </p>
-              <p className="mt-4 flex items-start gap-2 text-[0.8125rem] leading-relaxed text-muted">
-                <MapPin
+              <p className="mt-5 flex max-w-xl items-start gap-2.5 border-l-2 border-accent bg-white px-4 py-3 text-[0.8125rem] leading-relaxed text-muted">
+                <ShieldCheck
                   aria-hidden="true"
                   className="mt-0.5 h-4 w-4 shrink-0 text-accent-dark"
                 />
                 {t('reviews_note')}
               </p>
+              <p className="mt-4 flex items-start gap-2 text-[0.8125rem] leading-relaxed text-muted">
+                <MapPin
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-accent-dark"
+                />
+                {business.address.display}
+              </p>
             </Reveal>
           </div>
 
           <Reveal delay={0.14}>
-            <div className="relative overflow-hidden rounded-[10px] border border-white/10 bg-ink p-6 text-white shadow-[0_30px_60px_-40px_rgba(21,27,34,0.8)] sm:p-8">
+            <div className="relative overflow-hidden rounded-[6px] border border-white/10 bg-ink p-6 text-white shadow-[0_30px_60px_-40px_rgba(14,17,22,0.8)] sm:p-8">
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-8 -top-10 font-display text-[11rem] font-extrabold leading-none text-white/[0.04]"
+              >
+                “
+              </span>
+
               <Quote
                 aria-hidden="true"
                 className="h-9 w-9 text-accent"
                 strokeWidth={1.5}
               />
 
-              <h3 className="mt-5 font-display text-2xl font-bold leading-tight text-white">
+              <h3 className="relative mt-5 font-display text-2xl font-bold leading-tight text-white">
                 {t('reviews_card_title')}
               </h3>
-              <p className="mt-3 text-[0.9375rem] leading-relaxed text-white/60">
+              <p className="relative mt-3 text-[0.9375rem] leading-relaxed text-white/60">
                 {t('reviews_card_body')}
               </p>
 
-              <div className="mt-7 space-y-3">
+              <div className="relative mt-7 space-y-3">
                 <a
                   href={feedbackUrl}
                   target="_blank"

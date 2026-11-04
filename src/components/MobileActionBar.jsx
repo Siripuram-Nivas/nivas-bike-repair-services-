@@ -37,7 +37,7 @@ export default function MobileActionBar() {
 
         <a
           href="#book"
-          className="flex min-h-[3.5rem] flex-col items-center justify-center gap-1 bg-accent text-ink transition-colors hover:bg-[#fb923c] active:bg-accent"
+          className="flex min-h-[3.5rem] flex-col items-center justify-center gap-1 bg-accent text-ink transition-colors hover:bg-[#fbbf24] active:bg-accent"
         >
           <CalendarCheck aria-hidden="true" className="h-[18px] w-[18px]" />
           <span className="text-[0.625rem] font-bold uppercase tracking-[0.08em]">

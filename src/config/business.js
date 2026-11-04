@@ -1,8 +1,8 @@
 /**
  * Single source of truth for all business information used across the site.
  *
- * When the owner confirms new information (prices, hours, review link, photos),
- * update it here instead of editing individual components.
+ * When the owner confirms new information (prices, hours, photos), update it
+ * here instead of editing individual components.
  *
  * IMPORTANT: do not add prices, ratings, review counts, certifications or
  * guarantees that the business has not confirmed.
@@ -41,7 +41,7 @@ export const business = {
     // Plus Code search — deliberately no invented latitude/longitude.
     url: 'https://www.google.com/maps/search/?api=1&query=55VX%2BVRM%2C%20Sundaragiri%2C%20Telangana%20505467',
     embedUrl:
-      'https://www.google.com/maps?q=55VX%2BVRM%2C%20Sundaragiri%2C%20Telangana%20505467&z=15&output=embed',
+      'https://maps.google.com/maps?q=55VX%2BVRM%2C%20Sundaragiri%2C%20Telangana%20505467&t=&z=15&ie=UTF8&iwloc=&output=embed',
   },
 
   /**
@@ -67,6 +67,24 @@ export const business = {
 
   /** Brands already documented in the project. Confirm before expanding. */
   brands: ['Hero', 'Honda', 'Bajaj', 'TVS', 'Royal Enfield', 'Yamaha'],
+
+  images: {
+    hero: {
+      src: '/images/hero-workshop-1600.jpg',
+      srcSet:
+        '/images/hero-workshop-900.jpg 900w, /images/hero-workshop-1600.jpg 1600w',
+      width: 1600,
+      height: 1000,
+      altKey: 'hero_image_alt',
+    },
+    why: {
+      src: '/images/why-workshop.jpg',
+      srcSet: '/images/why-workshop-sm.jpg 600w, /images/why-workshop.jpg 900w',
+      width: 900,
+      height: 1100,
+      altKey: 'why_image_alt',
+    },
+  },
 };
 
 /**
@@ -122,21 +140,79 @@ export const services = [
   },
 ];
 
+/**
+ * Workshop gallery. These are licensed, representative photographs — not
+ * photos of the Nivas workshop. Replace the files in public/images with real
+ * workshop photos when they are available and keep the dimensions in sync.
+ */
+export const gallery = [
+  {
+    id: 'clutch',
+    src: '/images/gallery-clutch.jpg',
+    width: 1000,
+    height: 750,
+    titleKey: 'gallery1_title',
+    altKey: 'gallery1_alt',
+  },
+  {
+    id: 'engine',
+    src: '/images/gallery-engine.jpg',
+    width: 1000,
+    height: 750,
+    titleKey: 'gallery2_title',
+    altKey: 'gallery2_alt',
+  },
+  {
+    id: 'sprocket',
+    src: '/images/gallery-sprocket.jpg',
+    width: 1000,
+    height: 750,
+    titleKey: 'gallery3_title',
+    altKey: 'gallery3_alt',
+  },
+  {
+    id: 'classic',
+    src: '/images/gallery-mechanic.jpg',
+    width: 1000,
+    height: 750,
+    titleKey: 'gallery4_title',
+    altKey: 'gallery4_alt',
+  },
+  {
+    id: 'electrical',
+    src: '/images/gallery-electrical.jpg',
+    width: 1000,
+    height: 750,
+    titleKey: 'gallery5_title',
+    altKey: 'gallery5_alt',
+  },
+  {
+    id: 'local',
+    src: '/images/gallery-local.jpg',
+    width: 1000,
+    height: 750,
+    titleKey: 'gallery6_title',
+    altKey: 'gallery6_alt',
+  },
+];
+
 export const navLinks = [
   { id: 'home', key: 'nav_home' },
   { id: 'services', key: 'nav_services' },
   { id: 'why', key: 'nav_why' },
+  { id: 'gallery', key: 'nav_gallery' },
   { id: 'process', key: 'nav_process' },
-  { id: 'reviews', key: 'nav_reviews' },
+  { id: 'reviews', key: 'nav_feedback' },
   { id: 'faq', key: 'nav_faq' },
   { id: 'contact', key: 'nav_contact' },
 ];
 
 export const seo = {
-  title: 'Nivas Bike Repair Services | Bike Mechanic in Sundaragiri, Telangana',
+  title:
+    'Nivas Bike Repair Services | Bike Servicing & Repair in Sundaragiri',
   description:
-    'Looking for bike repair in Sundaragiri, Telangana? Contact Nivas Bike Repair Services for motorcycle servicing, repairs, maintenance and WhatsApp appointment booking.',
-  ogImage: '/og-image.jpg',
+    'Bike servicing, engine repair, oil changes and brake work in Sundaragiri, Telangana. Talk directly to the mechanic and request an appointment on WhatsApp.',
+  ogImage: '/images/og-image.jpg',
   locale: 'en_IN',
-  themeColor: '#151B22',
+  themeColor: '#0e1116',
 };
